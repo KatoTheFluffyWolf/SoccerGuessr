@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SoccerGuessr</title>
+
+  <!-- Bootstrap & Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <style>
+    body {
+      background-color: #f0f0f0;
+    }
+
+    .start-button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 10vh;
+    }
+
+    .btn-primary {
+      position: relative;
+      padding: 1.5vh 3vw !important;
+      border-radius: 8px;
+      background-color: #fcd7fb !important;
+      transition: background-color 0.2s ease;
+      color: black  !important;
+      font-size: 3vh !important;
+    }
+
+    #loading-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0%;
+      background-color: #fdd835;
+      z-index: 9999;
+      transition: width 0.4s ease, opacity 0.3s ease;
+    }
+
+    #loading-bar::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 0 8px #fdd835;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <div id="loading-bar"></div>
+
+  <div class="start-button-container">
+    <button type="button" class="btn btn-primary btn-custom btn-lg mt-5 rounded-5">Start</button>
+  </div>
+
+  <script>
+    // Load the navbar ONCE and attach the loading bar
+    fetch('nav-bar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-placeholder').innerHTML = html;
+        highlightCurrentPage();
+        attachNavbarLoadingBar();
+      });
+
+    // Highlight current page's link
+    function highlightCurrentPage() {
+      const currentPage = location.pathname.split('/').pop();
+      document.querySelectorAll('#navbar-placeholder .nav-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href === currentPage) {
+          const wrapper = link.closest('.nav-wrapper');
+          if (wrapper) {
+            wrapper.style.backgroundColor = '#1d3969';
+          }
+        }
+      });
+    }
+
+    // Attach loading bar to nav links
+    function attachNavbarLoadingBar() {
+      const loadingBar = document.getElementById("loading-bar");
+      const navLinks = document.querySelectorAll("#navbar-placeholder .nav-link");
+
+      navLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const href = this.getAttribute("href");
+
+          loadingBar.style.width = "0%";
+          loadingBar.style.opacity = "1";
+          
+          
+           setTimeout(() => {
+            loadingBar.style.width = "70%";
+            loadingBar.style.backgroundColor = "#ff9800"; // Stage 2: Orange
+          }, 50);
+
+          // Animate to 100% and change color
+          setTimeout(() => {
+            loadingBar.style.width = "100%";
+            loadingBar.style.backgroundColor = "#4caf50"; // Stage 3: Green
+          }, 500);
+
+          // Redirect
+          setTimeout(() => {
+            window.location.href = href;
+          }, 900);
+
+
+
+
+
+        });
+      });
+    }
+  </script>
+</body>
+</html>

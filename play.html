@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SoccerGuessr</title>
+
+  <!-- Bootstrap & Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <style>
+    body {
+      background-color: #f0f0f0;
+    }
+
+
+    .btn-primary {
+      position: relative;
+      padding: 1.5vh 3vw !important;
+      border-radius: 8px;
+      background-color: #fcd7fb !important;
+      transition: background-color 0.2s ease;
+      color: black  !important;
+      font-size: 3vh !important;
+    }
+      #loading-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0%;
+      z-index: 9999;
+      opacity: 1;
+      background-image: linear-gradient(to right, #35fd71ff, #2098faff);
+      background-size: 300% 100%;
+      background-position: 0% 0%;
+      transition:
+        width 0.6s ease,
+        background-position 0.6s ease,
+        opacity 0.3s ease;
+    }
+
+    #loading-bar::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 0 8px #fdd83580;
+      opacity: 0.6;
+    }
+
+    .search-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 5vh auto;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: none;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-size: 1rem;
+      transition: box-shadow 0.3s ease;
+      outline: none;
+    }
+
+    .search-input:focus {
+      box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.4); /* subtle blue glow */
+    }
+
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      left: 1rem;
+      transform: translateY(-50%);
+      font-size: 2rem; /* 15vh is likely too big */
+      color: rgba(162, 203, 236, 0.83) !important;  /* <-- force override */
+      pointer-events: none;
+      z-index: 3;
+    }
+    .player-card {
+      max-width: 75vw;
+      height: 100vh;
+      background-color: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin: 5vh auto;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+    }
+
+    .top-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .profile-img {
+      width: 15vw;
+      height: 30vh;
+      border-radius: 50%;
+      object-fit: contain;
+      border: 2px solid #eee;
+      margin-left: 2vw;
+    }
+
+    .info-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+      text-align: left;
+      margin-left: 1rem;
+    }
+
+    #player-name {
+      margin: 0;
+      font-size: 5vh;
+    }
+
+    #shirt-number {
+      font-size: 3vh;
+      color: #666;
+    }
+  .club-country {
+      margin-right: 0.5rem;
+      margin-top: 2rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  .club-img, .country-img {
+      width: 15vw;
+      height: 30vh;
+      object-fit: contain;
+      border: 2px solid #eee;
+      margin-right: 2vw;
+    }
+  .stats-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+      margin-left: 2vw;
+      margin-top: 2rem;
+      text-align: left;
+    }
+    .stats-section h3 {
+      margin-bottom: 1rem;
+      font-size: 4vh;
+      color: #333;
+    }   
+    .stats-section p {
+      margin: 0.5rem 0;
+      font-size: 3vh;
+      color: #555;
+    }
+    .reveal-container {
+      position: relative;
+      width: 100%;
+      height: 30vh;
+      border: 2px solid #eee;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+  .club-img, .country-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Reveal button covers the image */
+  .reveal-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #264e94cc;
+    border: none;
+    color: transparent;
+    font-size: 4vh;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    z-index: 2;
+    border-radius: 8px;
+  }
+
+  .reveal-button:hover {
+    color: white;
+    font-size: 4vh;
+  }
+
+  .image-label {
+  margin-top: 0.5rem;
+  font-size: 2.5vh;
+  font-weight: bold;
+  color: #26416ecc;
+  text-align: center;
+}
+.reveal-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 15vw;
+  margin-right: 2vw;
+  margin-top: 2rem;
+}
+
+@media screen and (max-width: 1024px) {
+  .player-card {
+    max-width: 95vw;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .top-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-img {
+    width: 40vw;
+    height: auto;
+    margin-left: 0;
+  }
+
+  .info-column {
+    text-align: center;
+    align-items: center;
+    margin-left: 0;
+  }
+
+  #player-name {
+    font-size: 4vh;
+  }
+
+  #shirt-number {
+    font-size: 2.5vh;
+  }
+
+  .reveal-wrapper {
+    height: 40vh;
+    width: 60vw;
+    margin: 1rem auto;
+  }
+
+  .reveal-container {
+    height: auto;
+    aspect-ratio: 1 / 1.3;
+  }
+
+  .image-label {
+    font-size: 2vh;
+  }
+
+  .stats-section {
+    text-align: center;
+    margin-left: 0;
+  }
+
+  .stats-section h3 {
+    font-size: 3vh;
+  }
+
+  .stats-section p {
+    font-size: 2.5vh;
+  }
+
+  .search-container {
+    margin: 3vh auto;
+    max-width: 90%;
+  }
+
+  .search-icon {
+    font-size: 1.5rem;
+    left: 0.8rem;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem 0.6rem 2.3rem;
+  }
+}
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <div id="loading-bar"></div>
+  <div class="search-container">
+    <input type="text" class="search-input" placeholder="Search players..." />
+    <i class="fa fa-search search-icon"></i>
+  </div>
+
+
+  
+  <div class="player-card">
+  <div class="top-section">
+    <img id="profile-img" alt="Player Photo" class="profile-img" src="https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352010-stock-illustration-default-placeholder-man-and-woman.jpg"/>
+    <div class="info-column">
+      <h2 id="player-name">Name: ???</h2>
+      <h2 id="shirt-number">Shirt Number: ???</h2>
+    </div>
+
+    <div class="reveal-wrapper">
+        <div class="reveal-container">
+          <img id="club-img" class="club-img" alt="Club Image" src="https://cdn-icons-png.flaticon.com/512/7270/7270617.png">
+          <button class="reveal-button">Reveal</button>
+        </div>
+        <p class="image-label">Club</p>
+    </div>
+
+    <div class="reveal-wrapper">
+      <div class="reveal-container">
+          <img id="country-img" class="country-img" alt="Country Image" src="https://cdn-icons-png.flaticon.com/512/7270/7270617.png">
+          <button class="reveal-button">Reveal</button>
+      </div>
+      <p class="image-label">Country</p>
+    </div>
+  </div>
+  <div class="stats-section">
+    <h3>Player Statistics</h3>
+    <p id="Position">Position: ???</p>
+    <p id="DOB">Date Of Birth: ???</p>
+    <p id="height">Height: ???</p>
+    <p id="caps">Caps: ???</p>
+    <p id="goals">Goals: ???</p>
+    <p id="market-value">Market Value: ???</p>
+
+
+
+
+  <script>
+    // Load the navbar ONCE and attach the loading bar
+    fetch('nav-bar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-placeholder').innerHTML = html;
+        highlightCurrentPage();
+        attachNavbarLoadingBar();
+      });
+
+    // Highlight current page's link
+    function highlightCurrentPage() {
+      const currentPage = location.pathname.split('/').pop();
+      document.querySelectorAll('#navbar-placeholder .nav-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href === currentPage) {
+          const wrapper = link.closest('.nav-wrapper');
+          if (wrapper) {
+            wrapper.style.backgroundColor = '#1d3969';
+          }
+        }
+      });
+    }
+
+    // Attach loading bar to nav links
+    function attachNavbarLoadingBar() {
+    const loadingBar = document.getElementById("loading-bar");
+    const navLinks = document.querySelectorAll("#navbar-placeholder .nav-link");
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        const href = this.getAttribute("href");
+
+        // Reset position and width
+        loadingBar.style.width = "0%";
+        loadingBar.style.backgroundPosition = "0% 0%";
+        loadingBar.style.opacity = "1";
+
+        // Animate with smooth gradient
+        setTimeout(() => {
+          loadingBar.style.width = "100%";
+          loadingBar.style.backgroundPosition = "100% 0%";
+        }, 50);
+
+        // Redirect after animation
+        setTimeout(() => {
+          window.location.href = href;
+        }, 900);
+      });
+    });
+  }
+  </script>
+  <script>
+  document.querySelectorAll('.reveal-button').forEach(button => {
+    button.addEventListener('click', () => {
+      button.remove(); // Reveals the image
+    });
+  });
+</script>
+</body>
+</html>
