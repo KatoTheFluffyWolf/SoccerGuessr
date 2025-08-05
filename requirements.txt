@@ -1,3 +1,6 @@
 supabase
 requests
 beautifulsoup4
+fastapi
+uvicorn
+python-dotenv
