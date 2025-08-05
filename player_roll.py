@@ -1,3 +1,4 @@
+
 !pip install supabase -q
 from datetime import datetime
 from supabase import create_client, Client
@@ -26,12 +27,13 @@ def player_roll():
     random_url = selected["url"]
 
     supabase.table("Daily Player").upsert({
+        "id": 1,
         "Date": today,
-        "id": selected_id,
+        "Player_ID": selected_id,
         "Daily_URL": random_url
     }).execute()
 
-    supabase.table("SoccerPlayerURLs").update({"used": True}).eq("ID", selected_id).execute()
+    #supabase.table("SoccerPlayerURLs").update({"used": True}).eq("ID", selected_id).execute()
 
     print(f"✅ Daily player set: ID={selected_id}, URL={random_url}")
 
