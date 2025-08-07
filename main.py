@@ -4,10 +4,6 @@ from supabase import create_client, Client
 import os
 
 # === Supabase Config ===
-SUPABASE_URL = "https://fvcapchuqxfelruvodyg.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2Y2FwY2h1cXhmZWxydXZvZHlnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTUzNjMyNCwiZXhwIjoyMDY1MTEyMzI0fQ.FG_xQYfvj88Wn-kd9hX7sYUkiDFZVl7Dd_PWblP5ECU"  # use service key for backend
-
-
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
