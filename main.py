@@ -90,4 +90,9 @@ def hint_height():
 @app.get("/hint/position")
 def hint_position():
     return table.select("Position").execute().data[0]["Position"]
+@app.post("/submit")
+def check_answer(payload: Guess):
+    true_answer = hint_name()
+    correct = payload.guess.strip().lower() == true_answer.strip().lower()
+    return {"correct": correct}
 
