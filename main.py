@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
+from pydantic import BaseModel
 import os
 
 # === Supabase Config ===
@@ -12,6 +13,9 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # === FastAPI app ===
 app = FastAPI()
 
+class Guess(BaseModel):
+    guess: str   # required string field
+    
 # === Allow CORS for your frontend ===
 app.add_middleware(
     CORSMiddleware,
