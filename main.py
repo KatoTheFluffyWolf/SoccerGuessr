@@ -18,11 +18,19 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
+    app.add_middleware(
+    CORSMiddleware,
     allow_origins=[
-        "https://katothefluffywolf.github.io",   # no trailing path
+        "https://katothefluffywolf.github.io",
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
         "http://localhost:5173",
         "http://localhost:3000",
     ],
+    allow_methods=["POST","OPTIONS"],
+    allow_headers=["Content-Type"],
+)
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
