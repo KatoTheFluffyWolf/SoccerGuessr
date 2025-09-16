@@ -29,12 +29,6 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
-
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 class Guess(BaseModel):
     guess: str
 
