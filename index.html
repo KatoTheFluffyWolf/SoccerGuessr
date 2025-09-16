@@ -391,7 +391,9 @@
   <div class="card">
     <div class="top-section">
       <div class="profile">
-        <img class="circle-img" src="https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352010-stock-illustration-default-placeholder-man-and-woman.jpg alt="Player Image">
+        <img class="circle-img"
+            src="https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352010-stock-illustration-default-placeholder-man-and-woman.jpg"
+            alt="Player Image">
         <div class="info">
           <h2>Name: ???</h2>
           <p>Shirt Number:</p>
@@ -501,43 +503,53 @@
   });
 
 
+  const API_BASE = "https://soccerguessr.onrender.com";
+  const default_points = 300;
+
   async function submitGuess() {
-  const input = document.querySelector('.search-input');
-  const guess = input.value.trim();
+    const input = document.querySelector('.search-input');
+    const guess = input.value.trim();
+    const submit_url = `${API_BASE}/submit`;
 
-  if (!guess) {
-    alert("Please enter a player's name.");
-    return;
-  }
-
-  try {
-    const response = await fetch('https://fvcapchuqxfelruvodyg.supabase.co/functions/v1/clever-handler', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ guess })
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      if (result.correct) {
-        alert("🎉 Correct guess!");
-      } else {
-        alert("❌ Wrong guess. Try again!");
-      }
-    } else {
-      console.error(result.error);
-      alert("An error occurred: " + result.error);
+    if (!guess) {
+      alert("Please enter a player's name.");
+      return;
     }
 
-  } catch (err) {
-    console.error("Fetch failed:", err);
-    alert("Something went wrong. Please try again later.");
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 15000);
+
+    try {
+      const res = await fetch(submit_url, {
+        method: "POST",
+        signal: ctrl.signal,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guess }),
+      });
+
+      if (!res.ok) {
+        let msg = `HTTP ${res.status}`;
+        try {
+          const err = await res.json();
+          if (err?.detail || err?.error) msg += ` - ${err.detail ?? err.error}`;
+        } catch {}
+        throw new Error(msg);
+      }
+
+      const data = await res.json(); // expects { correct: boolean }
+      if (data.correct) {
+        alert("Correct! You guessed the player.");
+      } else {
+        alert("Incorrect guess. Try again!");
+      }
+    } catch (e) {
+      console.error(e);
+      alert(`Request failed: ${e.message}`);
+    } finally {
+      clearTimeout(timeout);
+    }
   }
-  alert("Guess submitted");
-}
+  
 </script>
 
 
