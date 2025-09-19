@@ -77,7 +77,7 @@
       top: 45%;
       left: 1rem;
       transform: translateY(-50%);
-      font-size: 1.5rem !important; /* 15vh is likely too big */
+      font-size: 1.5rem !important; 
       color: #a2cbecd4 !important;  /* <-- force override */
       pointer-events: none;
       z-index: 3;
@@ -114,11 +114,18 @@
       padding: 0;
       background-color: #f0f0f0;
     }
-
+    #point-display {
+      text-align: center;
+      margin-top: -2vh;
+      font-size: 3vh;
+      font-weight: bold;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #4a76f0ff;
+    }
     .card {
       background-color: white;
       max-width: 60vw;
-      height: 92vh;
+      height: auto;
       margin: 40px auto;
       padding: 30px;
       border-radius: 30px;
@@ -146,11 +153,11 @@
       object-fit: contain;
     }
 
-    .info {
+    .top-info {
       font-size: 2vh;
     }
 
-    .info h2 {
+    .top-info h2 {
       margin: 0;
       font-size: 3.5vh;
     }
@@ -173,6 +180,7 @@
       height: 5vh;
       border: 2px solid #ccc;
       background-color: #f5f5f5;
+      border-radius: 15px;
       margin-top: 10px;
       display: flex;
       justify-content: center;
@@ -188,6 +196,30 @@
       justify-content: space-between;
       margin-top: 40px;
     }
+    /* Row layout */
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 2vh 0;
+    }
+    .info-cell { flex: 1 1 auto; }
+
+    /* Your custom button class */
+    .info-row-reveal {
+      flex: 0 0 auto;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid #e4e4e4;
+      background: #f8f8f8;
+      cursor: pointer;
+    }
+    .info-row-reveal:hover { background: #f1f1f1; }
+    .info-row-reveal:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .locked { opacity: 0.6; }
+    .revealed { opacity: 1; font-weight: 600; }
 
     .section {
       width: 48%;
@@ -201,7 +233,7 @@
     }
 
     .section p {
-      margin: 2vh 0;
+      margin: 3vh 0;
     }
 
     .hint-box {
@@ -211,7 +243,7 @@
       padding: 15px;
       background-color: #f9f9f9;
       min-height: 100px;
-      height: 18vh;
+      height: 16vh;
     }
 
     .button-container {
@@ -221,56 +253,56 @@
 
 
     /* Reveal button - shared base styles */
-/* Base reveal button */
-.reveal-button {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  background-color: #4a76f0ff;
-  color: white;
-  font-size: 2.3vh;
-  font-weight: 600;
-  border-radius: inherit;
-  cursor: pointer;
-  z-index: 2;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
+    /* Base reveal button */
+    .reveal-button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: #4a76f0ff;
+      color: white;
+      font-size: 2.3vh;
+      font-weight: 600;
+      border-radius: inherit;
+      cursor: pointer;
+      z-index: 2;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
 
-/* Hover style */
-.reveal-button:hover {
-  background-color: rgba(36, 60, 167, 0.85);
-  transform: scale(1.02);
-}
+    /* Hover style */
+    .reveal-button:hover {
+      background-color: rgba(36, 60, 167, 0.85);
+      transform: scale(1.02);
+    }
 
-/* Text injection via pseudo-element */
-.reveal-button::after {
-  content: 'Club';
-  display: block;
-  text-align: center;
-  line-height: 100%;
-  font-size: 2.5vh;
-}
+    /* Text injection via pseudo-element */
+    .reveal-button::after {
+      content: 'Club';
+      display: block;
+      text-align: center;
+      line-height: 100%;
+      font-size: 2.5vh;
+    }
 
-.reveal-club:hover::after {
-  content: 'Reveal Club';
-}
+    .reveal-club:hover::after {
+      content: 'Reveal Club';
+    }
 
-.reveal-league::after {
-  content: 'League';
-  font-size: 2vh;
-}
-.reveal-league:hover::after {
-  content: 'Reveal League';
-}
+    .reveal-league::after {
+      content: 'League';
+      font-size: 2vh;
+    }
+    .reveal-league:hover::after {
+      content: 'Reveal League';
+    }
 
-/* Ensure the parent has position relative */
-.club-box, .league-box {
-  position: relative;
-  overflow: hidden;
-}
+    /* Ensure the parent has position relative */
+    .club-box, .league-box {
+      position: relative;
+      overflow: hidden;
+    }
 
 @media screen and (max-width: 768px) {
   .card {
@@ -297,12 +329,12 @@
     height: 30vw;
   }
 
-  .info h2 {
+  .top-info h2 {
     font-size: 2.5vh;
     text-align: center;
   }
 
-  .info p {
+  .top-info p {
     font-size: 2vh;
     text-align: center;
   }
@@ -387,14 +419,14 @@
     <i class="fa fa-arrow-right"></i>
   </button>
 </div>
-  
+  <h1 id="point-display"> Points: 300 </h1> <!-- Dynamic points display -->
   <div class="card">
     <div class="top-section">
       <div class="profile">
         <img class="circle-img"
             src="https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352010-stock-illustration-default-placeholder-man-and-woman.jpg"
             alt="Player Image">
-        <div class="info">
+        <div class="top-info">
           <h2>Name: ???</h2>
           <p>Shirt Number:</p>
         </div>
@@ -412,23 +444,71 @@
     </div>
 
     <div class="content-section">
-      <div class="section">
-        <h3>Player Information</h3>
-        <p>Date Of Birth:</p>
-        <p>Nationality:</p>
-        <p>Height:</p>
-        <p>Preferred Foot:</p>
-        <p>Position:</p>
-        <p>Market Value:</p>
-      </div>
-      <div class="section">
-        <h3>Career Stats</h3>
-        <p>Appearances:</p>
-        <p>Goals:</p>
-        <p>Yellow Cards:</p>
-        <p>Red Cards:</p>
-        <p>Minutes Played:</p>
-      </div>
+      <!-- LEFT: data area -->
+      <!-- Player & Stats sections with per-row Reveal buttons -->
+    <div class="section">
+      <h3>Player Information</h3>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Date Of Birth:</strong> <span id="dob" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="dob">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Nationality:</strong> <span id="nat" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="nat">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Height:</strong> <span id="height" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="height">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Preferred Foot:</strong> <span id="foot" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="foot">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Position:</strong> <span id="pos" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="pos">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Market Value:</strong> <span id="mv" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="mv">Reveal</button>
+      </p>
+    </div>
+
+    <div class="section">
+      <h3>Career Stats</h3>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Appearances:</strong> <span id="apps" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="apps">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Goals:</strong> <span id="goals" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="goals">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Yellow Cards:</strong> <span id="yc" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="yc">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Red Cards:</strong> <span id="rc" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="rc">Reveal</button>
+      </p>
+
+      <p class="info-row">
+        <span class="info-cell"><strong>Minutes Played:</strong> <span id="mins" class="locked">— —</span></span>
+        <button class="info-row-reveal" data-target="mins">Reveal</button>
+      </p>
+    </div>
+
     </div>
 
     <div class="hint-box">
@@ -503,8 +583,10 @@
   });
 
 
+
+  // API interaction for submitting guesses
   const API_BASE = "https://soccerguessr.onrender.com";
-  const default_points = 300;
+  let default_points = 300;
 
   async function submitGuess() {
     const input = document.querySelector('.search-input');
@@ -516,13 +598,11 @@
       return;
     }
 
-    const ctrl = new AbortController();
-    const timeout = setTimeout(() => ctrl.abort(), 15000);
+  
 
     try {
       const res = await fetch(submit_url, {
         method: "POST",
-        signal: ctrl.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ guess }),
       });
@@ -541,15 +621,85 @@
         alert("Correct! You guessed the player.");
       } else {
         alert("Incorrect guess. Try again!");
+        // Deduct points for incorrect guess
+        let pointDisplay = document.getElementById("point-display");
+        default_points -= 10; // Deduct 10 points for wrong guess
+        pointDisplay.textContent = `Points: ${default_points}`;
       }
     } catch (e) {
       console.error(e);
       alert(`Request failed: ${e.message}`);
     } finally {
-      clearTimeout(timeout);
+      input.value = "";
     }
   }
   
+  // Reveal button logic for info rows
+
+  // Map each data-target to its GET endpoint
+  const HINT_ENDPOINTS = {
+    dob:   "/hint/birthdate",
+    nat:   "/hint/nationality",
+    height:"/hint/height",
+    foot:  "/hint/foot",
+    pos:   "/hint/position",
+    mv:    "/hint/market-value",
+
+    apps:  "/hint/appearances",
+    goals: "/hint/goals",
+    yc:    "/hint/yellow-cards",
+    rc:    "/hint/red-cards",
+    mins:  "/hint/minutes-played",
+  };
+
+  async function fetchHint(target) {
+    const path = HINT_ENDPOINTS[target];
+    if (!path) throw new Error(`No endpoint mapped for ${target}`);
+    const url = `${API_BASE}${path}`;
+
+    // No AbortController — let it wait through Render cold start
+    const res = await fetch(url, { method: "GET" });
+
+    if (!res.ok) {
+      let msg = `HTTP ${res.status}`;
+      try {
+        const err = await res.json();
+        if (err?.detail) msg += ` - ${err.detail}`;
+      } catch {}
+      throw new Error(msg);
+    }
+    // Your endpoints return the raw JSON value (e.g., "Portugal"), not {value: "..."}
+    return res.json();
+  }
+
+  // One event listener for all row buttons
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".info-row-reveal");
+    if (!btn) return;
+
+    const target = btn.dataset.target;             // e.g., "dob"
+    const slot   = document.getElementById(target); // <span id="dob">
+    if (!target || !slot) return;
+
+    // UI: loading state
+    const originalBtnText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Loading…";
+
+    try {
+      const value = await fetchHint(target);
+      slot.textContent = value ?? "N/A";
+      slot.classList.remove("locked");
+      slot.classList.add("revealed");
+      btn.textContent = "Revealed ✓";
+    } catch (err) {
+      console.error(err);
+      // restore button on failure
+      btn.disabled = false;
+      btn.textContent = originalBtnText;
+      alert(`Failed to load ${target}: ${err.message}`);
+    }
+  });
 </script>
 
 
