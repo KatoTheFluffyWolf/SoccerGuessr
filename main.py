@@ -134,7 +134,7 @@ def generate_hint():
         Coarse facts you may reference: nationality={player_nat}, league={player_league}
 
         Rules:
-        - Exactly 1 sentence, 12–22 words.
+        - 1-3 sentence, each 12–22 words.
         - Never print names, initials, unique club/manager names, exact shirt numbers, or exact dates.
         - Use coarse descriptors only (e.g., “top-five European league”, “late 2010s”, “capital-city club”).
         - Keep it useful but non-revealing; at least 5–10 modern pros should plausibly match.
