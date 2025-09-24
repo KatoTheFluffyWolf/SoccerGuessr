@@ -1,6 +1,9 @@
 supabase
+google-genai
 requests
 beautifulsoup4
 fastapi
+pydantic
 uvicorn
 python-dotenv
+
