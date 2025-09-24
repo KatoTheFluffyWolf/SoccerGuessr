@@ -242,7 +242,7 @@
     }
 
     .hint-box {
-      margin-top: 5vh;
+      margin-top: 2vh;
       border: 1px solid #ccc;
       border-radius: 15px;
       padding: 15px;
@@ -307,7 +307,19 @@
     .club-box, .league-box {
       position: relative;
       overflow: hidden;
+      object-fit: contain;
     }
+
+    .hint-row p {
+        margin: 0; /* remove extra spacing */
+      }
+    
+    .hint-row {
+      display: flex;
+      justify-content: space-between; /* pushes p left, button right */
+      align-items: center;            /* vertically align them */
+    }
+
 
 @media screen and (max-width: 768px) {
   .card {
@@ -434,7 +446,7 @@
         <div class="top-info">
           <h2>Name: — —</h2>
           <p class="info-row">
-            <span class="info-cell" id ="shirt-row"><strong>Shirt Number:</strong> <span id="shirt" class="locked">— —</span></span>
+            <span class="info-cell" id ="shirt-row">Shirt Number: <span id="shirt" class="locked">— —</span></span>
             <button class="info-row-reveal" data-target="shirt">Reveal</button>
           </p>
         </div>
@@ -456,32 +468,32 @@
       <h3>Player Information</h3>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Date Of Birth:</strong> <span id="dob" class="locked">— —</span></span>
+        <span class="info-cell">Date Of Birth: <span id="dob" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="dob">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Nationality:</strong> <span id="nat" class="locked">— —</span></span>
+        <span class="info-cell">Nationality: <span id="nat" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="nat">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Height:</strong> <span id="height" class="locked">— —</span></span>
+        <span class="info-cell">Height: <span id="height" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="height">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Preferred Foot:</strong> <span id="foot" class="locked">— —</span></span>
+        <span class="info-cell">Preferred Foot: <span id="foot" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="foot">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Position:</strong> <span id="pos" class="locked">— —</span></span>
+        <span class="info-cell">Position: <span id="pos" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="pos">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Market Value:</strong> <span id="mv" class="locked">— —</span></span>
+        <span class="info-cell">Market Value: <span id="mv" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="mv">Reveal</button>
       </p>
     </div>
@@ -490,35 +502,46 @@
       <h3>Career Stats</h3>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Appearances:</strong> <span id="apps" class="locked">— —</span></span>
+        <span class="info-cell">Appearances: <span id="apps" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="apps">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Goals:</strong> <span id="goals" class="locked">— —</span></span>
+        <span class="info-cell">Goals: <span id="goals" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="goals">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Yellow Cards:</strong> <span id="yc" class="locked">— —</span></span>
+        <span class="info-cell">Yellow Cards: <span id="yc" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="yc">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Red Cards:</strong> <span id="rc" class="locked">— —</span></span>
+        <span class="info-cell">Red Cards: <span id="rc" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="rc">Reveal</button>
       </p>
 
       <p class="info-row">
-        <span class="info-cell"><strong>Minutes Played:</strong> <span id="mins" class="locked">— —</span></span>
+        <span class="info-cell">Minutes Played: <span id="mins" class="locked">— —</span></span>
         <button class="info-row-reveal" data-target="mins">Reveal</button>
       </p>
     </div>
 
     </div>
 
+    <div class="ai-hint-section">
+      <h3>AI Hint</h3>
+      <div class="hint-row">
+        <p>
+          Need a better hint? Click "Generate" to get an AI-generated clue about the player. Costs 20 points.
+        </p>
+        <button class="info-row-reveal" data-target="ai_hint" onclick= GenerateHint()>Generate</button>
+      </div>
     <div class="hint-box">
-      <p>AI generated hint</p>
+      <p>
+      <span class="info-cell-ai">Your hint will appear here...</span></span>
+      </p>
+    </div>
     </div>
   </div>
 
@@ -760,6 +783,8 @@
     yc:    "/hint/yellow-cards",
     rc:    "/hint/red-cards",
     mins:  "/hint/minutes-played",
+
+    ai_hint: "/hint/ai-generated",
   };
   const COSTS = {
     shirt: 15,
@@ -775,6 +800,8 @@
     yc:    5,
     rc:    5,
     mins:  5,
+
+    ai_hint: 20,
   };
   //Retrieve hint from API
   async function fetchHint(target) {
@@ -943,6 +970,43 @@
       location.reload();
     });
   });
+
+
+  async function GenerateHint() {
+    const COST = 20;
+    if (default_points < COST) {
+      alert(`Not enough points to generate an AI hint. You need ${COST} points.`);
+      return;
+    }
+    const btn = document.querySelector('button[data-target="ai_hint"]');
+    const hintBox = document.querySelector('.hint-box .info-cell-ai');
+    if (!btn || !hintBox) return;
+
+    const originalBtnText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Loading…";
+
+    try {
+      const hint = await fetchHint("ai_hint");
+      hintBox.textContent = hint ?? "N/A";
+      default_points -= COST;
+      document.getElementById("point-display").textContent = `Points: ${default_points}`;
+      btn.textContent = "Generated ✓";
+    } catch (err) {
+      console.error(err);
+      btn.disabled = false;
+      btn.textContent = originalBtnText;
+      alert(`Failed to generate AI hint: ${err.message}`);
+    } finally {
+    // ALWAYS re-enable the button
+    btn.disabled = false;
+    btn.removeAttribute("aria-busy");
+    // optional: set a steady-state label for next click
+    if (btn.textContent === "Generated ✓") {
+      btn.textContent = "Generate again";
+    }
+  }
+  }
 </script>
 
 
