@@ -4,12 +4,15 @@ from supabase import create_client, Client
 from pydantic import BaseModel
 import os
 
-# === Supabase Config ===
+# === Supabase and Gemini Config ===
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise RuntimeError("Missing SUPABASE_URL or SUPABASE_KEY env vars")
-
+GEM_KEY = os.getenv("GEM_KEY")
+if not GEM_KEY:
+    raise RuntimeError("Missing API_KEY env var")
+    
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 table = supabase.table("Daily Player")  # assumes today's row exists
 
@@ -112,6 +115,33 @@ def hint_height():
 @app.get("/hint/position")
 def hint_position():
     return get_today_field("Position")
+
+@app.get("/hint/ai-generated")
+def generate_hint():
+  player_name= hint_name()
+  player_league= hint_league()
+  player_nat = hint_nationality()
+
+  client = genai.Client(api_key=GEM_KEY)
+
+  response = client.models.generate_content(
+      model="gemini-2.5-flash",
+      contents=f"""
+        You are writing ONE subtle, interesting hint for a soccer-guessing game.
+
+        Target player (for your reasoning only): {player_name}
+        Coarse facts you may reference: nationality={player_nat}, league={player_league}
+
+        Rules:
+        - Exactly 1 sentence, 12–22 words.
+        - Never print names, initials, unique club/manager names, exact shirt numbers, or exact dates.
+        - Use coarse descriptors only (e.g., “top-five European league”, “late 2010s”, “capital-city club”).
+        - Keep it useful but non-revealing; at least 5–10 modern pros should plausibly match.
+        - Return only the sentence.
+
+        Now produce the hint.
+        """)
+  return response.text
 
 # --- Submit guess --------------------------------------------
 @app.post("/submit")
